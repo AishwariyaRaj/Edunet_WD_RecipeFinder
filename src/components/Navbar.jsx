@@ -25,6 +25,9 @@ const Navbar = () => {
             <Link to="/add-recipe" className="hover:text-primary transition-colors font-medium">
               Add Recipe
             </Link>
+            <Link to="/test-spoonacular" className="hover:text-primary transition-colors font-medium">
+              Test API
+            </Link>
           </div>
           
           {/* Mobile menu button */}
@@ -52,6 +55,9 @@ const Navbar = () => {
           </Link>
           <Link to="/add-recipe" className="block px-3 py-2 hover:text-primary transition-colors font-medium">
             Add Recipe
+          </Link>
+          <Link to="/test-spoonacular" className="block px-3 py-2 hover:text-primary transition-colors font-medium">
+            Test API
           </Link>
         </div>
       </div>

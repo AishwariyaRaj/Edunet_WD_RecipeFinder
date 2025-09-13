@@ -7,26 +7,21 @@ export default {
   theme: {
     extend: {
       colors: {
+        dark: {
+          DEFAULT: '#121212',
+          lighter: '#1e1e1e',
+          darker: '#0a0a0a'
+        },
         primary: {
-          DEFAULT: '#FF5A1F', // Orange accent color
-          dark: '#E04E1A',
-          light: '#FF7E4A',
+          DEFAULT: '#4f46e5',
+          light: '#6366f1',
+          dark: '#3c35b5'  // Added primary-dark color
         },
         secondary: {
-          DEFAULT: '#FF3B30', // Red accent color
-          dark: '#E02D24',
-          light: '#FF6259',
-        },
-        dark: {
-          DEFAULT: '#1A1A1A', // Dark background
-          lighter: '#2A2A2A',
-          darker: '#121212',
-        },
-        light: {
-          DEFAULT: '#F8F8F8',
-          darker: '#E0E0E0',
+          DEFAULT: '#f43f5e',
+          dark: '#e11d48'  // Added secondary-dark color
         }
-      },
+      }
     },
   },
   plugins: [],

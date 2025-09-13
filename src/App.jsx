@@ -4,6 +4,7 @@ import Home from './pages/Home'
 import Favorites from './pages/Favorites'
 import ShoppingList from './pages/ShoppingList'
 import AddRecipe from './pages/AddRecipe'
+import TestSpoonacular from './pages/TestSpoonacular'
 import { RecipeProvider } from './context/RecipeContext'
 
 function App() {
@@ -17,6 +18,7 @@ function App() {
             <Route path="/favorites" element={<Favorites />} />
             <Route path="/shopping-list" element={<ShoppingList />} />
             <Route path="/add-recipe" element={<AddRecipe />} />
+            <Route path="/test-spoonacular" element={<TestSpoonacular />} />
           </Routes>
         </main>
       </div>

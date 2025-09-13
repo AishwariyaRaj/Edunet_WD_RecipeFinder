@@ -24,14 +24,6 @@ export const RecipeProvider = ({ children }) => {
       storedUserRecipes: !!storedUserRecipes 
     })
 
-    if (storedFavorites) {
-      setFavorites(JSON.parse(storedFavorites))
-    }
-    
-    if (storedShoppingList) {
-      setShoppingList(JSON.parse(storedShoppingList))
-    }
-    
     // Create sample recipes
     const timestamp = Date.now();
     const sampleRecipes = [
@@ -149,6 +141,7 @@ export const RecipeProvider = ({ children }) => {
       },
       {
         id: timestamp + 300,
+        title: 'Ramen Noodles',
         summary: 'A comforting Japanese noodle soup made with broth, noodles, vegetables, and toppings like egg and meat.',
         ingredients: [
            { id: timestamp + 601, name: '200g ramen noodles', purchased: false },
@@ -167,7 +160,72 @@ export const RecipeProvider = ({ children }) => {
         image: 'https://i.postimg.cc/GpkMZ5Tx/Trimmed-03-Miso-Ramen-02-M.jpg',
          isUserRecipe: true,
         createdAt: new Date(Date.now() - 259200000).toISOString() // 3 days ago
-      }
+      },
+      {
+        id: timestamp + 300,
+         title: 'Vegetable Stir-Fry',
+        summary: 'A quick and healthy vegetable stir-fry with colorful veggies, tossed in a savory soy-garlic sauce. Perfect for a light dinner or side dish.',
+        ingredients: [
+          { id: timestamp + 701, name: '2 tbsp vegetable oil', purchased: false },
+          { id: timestamp + 702, name: '2 cloves garlic, minced', purchased: false },
+          { id: timestamp + 703, name: '1 small onion, sliced', purchased: false },
+          { id: timestamp + 704, name: '1 red bell pepper, sliced', purchased: false },
+          { id: timestamp + 705, name: '1 cup broccoli florets', purchased: false },
+          { id: timestamp + 706, name: '1 carrot, thinly sliced', purchased: false },
+          { id: timestamp + 707, name: '1 zucchini, sliced', purchased: false },
+          { id: timestamp + 708, name: '3 tbsp soy sauce', purchased: false },
+          { id: timestamp + 709, name: '1 tbsp oyster sauce (optional)', purchased: false },
+          { id: timestamp + 710, name: '1 tsp sesame oil', purchased: false },
+          { id: timestamp + 711, name: '1 tsp cornstarch mixed with 2 tbsp water', purchased: false },
+          { id: timestamp + 712, name: '1 spring onion, chopped', purchased: false }
+        ],
+        instructions: 'Heat vegetable oil in a large pan or wok. Add garlic and onion, stir-fry for 1 minute. Add bell pepper, broccoli, carrot, and zucchini; cook until slightly tender but still crisp. Stir in soy sauce, oyster sauce, and sesame oil. Add cornstarch slurry to thicken sauce, stir well. Remove from heat and garnish with spring onion. Serve hot with rice or noodles.',
+        image: 'https://i.postimg.cc/mgqPsTkT/stir-fry-recipe.jpg',
+        isUserRecipe: true,
+        createdAt: new Date(Date.now() - 259200000).toISOString() // 3 days ago
+      },
+      {
+  id: timestamp + 600,
+  title: 'Banana Pancakes',
+  summary: 'Fluffy homemade pancakes infused with ripe bananas, perfect for breakfast or brunch. Sweet, soft, and satisfying.',
+  ingredients: [
+    { id: timestamp + 901, name: '1 cup all-purpose flour', purchased: false },
+    { id: timestamp + 902, name: '2 tbsp sugar', purchased: false },
+    { id: timestamp + 903, name: '1 tsp baking powder', purchased: false },
+    { id: timestamp + 904, name: '1/2 tsp baking soda', purchased: false },
+    { id: timestamp + 905, name: '1/4 tsp salt', purchased: false },
+    { id: timestamp + 906, name: '1 ripe banana, mashed', purchased: false },
+    { id: timestamp + 907, name: '3/4 cup milk', purchased: false },
+    { id: timestamp + 908, name: '1 egg', purchased: false },
+    { id: timestamp + 909, name: '1 tbsp melted butter', purchased: false },
+    { id: timestamp + 910, name: 'Butter or oil for cooking', purchased: false },
+    { id: timestamp + 911, name: 'Maple syrup or honey for serving', purchased: false }
+  ],
+  instructions: 'In a bowl, mix flour, sugar, baking powder, baking soda, and salt. In another bowl, whisk mashed banana, milk, egg, and melted butter. Combine wet and dry ingredients, stirring until just mixed. Heat a pan with butter or oil, pour batter to form pancakes, and cook until bubbles form on top. Flip and cook until golden. Serve with maple syrup or honey.',
+  image: 'https://i.postimg.cc/hPdwrrmM/coconut-flour-banana-pancakes4.jpg',
+  isUserRecipe: true,
+  createdAt: new Date().toISOString() // today
+    },
+    {
+  id: timestamp + 700,
+  title: 'Chocolate Mousse',
+  summary: 'A rich and creamy chocolate mousse made with just a few ingredients. A perfect dessert for chocolate lovers.',
+  ingredients: [
+    { id: timestamp + 1001, name: '200g dark chocolate, chopped', purchased: false },
+    { id: timestamp + 1002, name: '3 large eggs, separated', purchased: false },
+    { id: timestamp + 1003, name: '1/4 cup sugar', purchased: false },
+    { id: timestamp + 1004, name: '1 cup heavy cream', purchased: false },
+    { id: timestamp + 1005, name: '1 tsp vanilla extract', purchased: false },
+    { id: timestamp + 1006, name: 'Pinch of salt', purchased: false },
+    { id: timestamp + 1007, name: 'Fresh berries (for garnish)', purchased: false },
+    { id: timestamp + 1008, name: 'Whipped cream (optional garnish)', purchased: false }
+  ],
+  instructions: 'Melt chocolate in a heatproof bowl over simmering water, then let cool slightly. In a separate bowl, whisk egg yolks with sugar until pale. In another bowl, beat egg whites with a pinch of salt until stiff peaks form. Whip heavy cream with vanilla until soft peaks. Gently fold melted chocolate into yolk mixture, then fold in whipped cream, and finally fold in egg whites. Chill for at least 2 hours. Serve topped with berries and whipped cream.',
+  image: 'https://i.postimg.cc/xdtFCFrj/chocolate-mousse-featured.webp',
+  isUserRecipe: true,
+  createdAt: new Date(Date.now() - 432000000).toISOString() // 5 days ago
+    }
+
     ];
     
     // If there are stored user recipes, use them, otherwise use the sample recipes
@@ -188,18 +246,34 @@ export const RecipeProvider = ({ children }) => {
       // Add sample recipes if no user recipes exist
       setUserRecipes(sampleRecipes);
       localStorage.setItem('userRecipes', JSON.stringify(sampleRecipes));
-      
-      // Add sample ingredients to shopping list from the first recipe if no shopping list exists
-      if (!storedShoppingList) {
-        const sampleIngredients = sampleRecipes[0].ingredients.map(ingredient => ({
-          ...ingredient,
-          recipeId: sampleRecipes[0].id,
-          recipeTitle: sampleRecipes[0].title
-        }));
-        setShoppingList(sampleIngredients);
-        localStorage.setItem('shoppingList', JSON.stringify(sampleIngredients));
-      }
     }
+    
+    // Add sample ingredients to shopping list
+    const sampleIngredients = sampleRecipes[0].ingredients.map(ingredient => ({
+      ...ingredient,
+      recipeId: sampleRecipes[0].id,
+      recipeTitle: sampleRecipes[0].title
+    }));
+    
+    // Set shopping list with sample ingredients regardless of localStorage state
+    setShoppingList(sampleIngredients);
+    localStorage.setItem('shoppingList', JSON.stringify(sampleIngredients));
+    
+    // Add default recipes to favorites
+    const defaultFavorites = [sampleRecipes[0], sampleRecipes[1]];
+    
+    // Set favorites with default recipes regardless of localStorage state
+    setFavorites(defaultFavorites);
+    localStorage.setItem('favorites', JSON.stringify(defaultFavorites));
+    
+    // Remove these lines that overwrite our default values
+    // if (storedFavorites) {
+    //   setFavorites(JSON.parse(storedFavorites))
+    // }
+    
+    // if (storedShoppingList) {
+    //   setShoppingList(JSON.parse(storedShoppingList))
+    // }
   }, [])
 
   // Save to localStorage whenever data changes
@@ -295,6 +369,34 @@ export const RecipeProvider = ({ children }) => {
     setUserRecipes([...userRecipes, newRecipe])
   }
 
+  // Function to get detailed recipe information from Spoonacular API
+  const getRecipeDetails = async (recipeId) => {
+    setLoading(true)
+    setError(null)
+    
+    try {
+      // Note: In a real app, you would use your actual API key
+      const API_KEY = 'ddcfe0ee6d704e70bd1df3737e1ca4c7' 
+      const url = `https://api.spoonacular.com/recipes/${recipeId}/information?apiKey=${API_KEY}`
+      
+      const response = await fetch(url)
+      const data = await response.json()
+      
+      if (data) {
+        return data
+      } else {
+        setError('Recipe details not found')
+        return null
+      }
+    } catch (err) {
+      setError('Failed to fetch recipe details. Please try again.')
+      console.error('Error fetching recipe details:', err)
+      return null
+    } finally {
+      setLoading(false)
+    }
+  }
+
   const value = {
     recipes,
     favorites,
@@ -303,6 +405,7 @@ export const RecipeProvider = ({ children }) => {
     loading,
     error,
     searchRecipes,
+    getRecipeDetails,
     toggleFavorite,
     addToShoppingList,
     removeFromShoppingList,

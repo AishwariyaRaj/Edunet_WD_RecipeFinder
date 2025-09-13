@@ -1,13 +1,15 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useRecipeContext } from '../context/RecipeContext'
 
 const RecipeCard = ({ recipe }) => {
-  const { toggleFavorite, favorites, addToShoppingList } = useRecipeContext()
+  const { toggleFavorite, favorites, addToShoppingList, getRecipeDetails } = useRecipeContext()
   const [showModal, setShowModal] = useState(false)
+  const [recipeDetails, setRecipeDetails] = useState(null)
+  const [loadingDetails, setLoadingDetails] = useState(false)
   
   const isFavorite = favorites.some(fav => fav.id === recipe.id)
   
-  const handleAddToShoppingList = (e) => {
+  const handleAddToShoppingList = async (e) => {
     // Prevent the card click event from triggering
     e.stopPropagation()
     
@@ -17,14 +19,43 @@ const RecipeCard = ({ recipe }) => {
       return
     }
     
-    // For Spoonacular API recipes, we would need to fetch detailed information
-    // In a real app, you would make an API call to get the ingredients
-    // For this demo, we'll use placeholder data
-    const placeholderIngredients = [
-      { id: Date.now(), name: 'Ingredient from ' + recipe.title, purchased: false }
-    ]
-    
-    addToShoppingList(placeholderIngredients, recipe.id, recipe.title)
+    // For Spoonacular API recipes, get detailed information if we don't have it yet
+    if (!recipeDetails) {
+      setLoadingDetails(true)
+      try {
+        const details = await getRecipeDetails(recipe.id)
+        if (details) {
+          setRecipeDetails(details)
+          
+          // Format the ingredients from Spoonacular API
+          const formattedIngredients = details.extendedIngredients.map(ingredient => ({
+            id: Date.now() + ingredient.id,
+            name: `${ingredient.amount} ${ingredient.unit} ${ingredient.name}`,
+            purchased: false
+          }))
+          
+          addToShoppingList(formattedIngredients, recipe.id, recipe.title)
+        }
+      } catch (error) {
+        console.error('Error fetching recipe details for shopping list:', error)
+        // Fallback to placeholder if API call fails
+        const placeholderIngredients = [
+          { id: Date.now(), name: 'Ingredient from ' + recipe.title, purchased: false }
+        ]
+        addToShoppingList(placeholderIngredients, recipe.id, recipe.title)
+      } finally {
+        setLoadingDetails(false)
+      }
+    } else {
+      // We already have the recipe details
+      const formattedIngredients = recipeDetails.extendedIngredients.map(ingredient => ({
+        id: Date.now() + ingredient.id,
+        name: `${ingredient.amount} ${ingredient.unit} ${ingredient.name}`,
+        purchased: false
+      }))
+      
+      addToShoppingList(formattedIngredients, recipe.id, recipe.title)
+    }
   }
   
   const handleFavoriteClick = (e) => {
@@ -32,15 +63,33 @@ const RecipeCard = ({ recipe }) => {
     toggleFavorite(recipe)
   }
   
-  const openModal = () => {
+  const openModal = async () => {
     setShowModal(true)
     document.body.style.overflow = 'hidden' // Prevent scrolling when modal is open
+    
+    // If this is a Spoonacular API recipe (not a user recipe) and we don't have details yet
+    if (!recipe.isUserRecipe && !recipeDetails && !loadingDetails) {
+      setLoadingDetails(true)
+      try {
+        const details = await getRecipeDetails(recipe.id)
+        if (details) {
+          setRecipeDetails(details)
+        }
+      } catch (error) {
+        console.error('Error fetching recipe details:', error)
+      } finally {
+        setLoadingDetails(false)
+      }
+    }
   }
   
   const closeModal = () => {
     setShowModal(false)
     document.body.style.overflow = 'auto' // Re-enable scrolling
   }
+  
+  // Get the recipe data to display - either the original recipe or the detailed version
+  const displayRecipe = recipeDetails || recipe
   
   return (
     <>
@@ -107,37 +156,74 @@ const RecipeCard = ({ recipe }) => {
               </button>
             </div>
             
-            {recipe.image && (
+            {loadingDetails ? (
+              <div className="w-full h-64 bg-dark-darker flex items-center justify-center">
+                <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
+              </div>
+            ) : displayRecipe.image ? (
               <img 
-                src={recipe.image} 
-                alt={recipe.title} 
+                src={displayRecipe.image} 
+                alt={displayRecipe.title} 
                 className="w-full h-64 object-cover"
               />
-            )}
+            ) : null}
             
             <div className="p-6">
-              {recipe.summary && (
+              {loadingDetails ? (
+                <div className="mb-6">
+                  <h3 className="text-lg font-semibold mb-2 text-primary">Loading recipe details...</h3>
+                  <div className="animate-pulse h-4 bg-dark-darker rounded w-full mb-2"></div>
+                  <div className="animate-pulse h-4 bg-dark-darker rounded w-3/4 mb-2"></div>
+                  <div className="animate-pulse h-4 bg-dark-darker rounded w-5/6"></div>
+                </div>
+              ) : displayRecipe.summary ? (
                 <div className="mb-6">
                   <h3 className="text-lg font-semibold mb-2 text-primary">Description</h3>
-                  <p className="text-gray-400">{recipe.summary}</p>
+                  <p className="text-gray-400">
+                    {typeof displayRecipe.summary === 'string' && displayRecipe.summary.includes('<') 
+                      ? displayRecipe.summary.replace(/<[^>]*>/g, '') // Remove HTML tags
+                      : displayRecipe.summary}
+                  </p>
                 </div>
-              )}
+              ) : null}
               
-              {recipe.ingredients && recipe.ingredients.length > 0 && (
+              {!loadingDetails && (
                 <div className="mb-6">
                   <h3 className="text-lg font-semibold mb-2 text-primary">Ingredients</h3>
                   <ul className="list-disc pl-5 text-gray-400">
-                    {recipe.ingredients.map((ingredient, index) => (
-                      <li key={index}>{ingredient.name}</li>
-                    ))}
+                    {displayRecipe.ingredients ? (
+                      // For user recipes
+                      displayRecipe.ingredients.map((ingredient, index) => (
+                        <li key={index}>{ingredient.name}</li>
+                      ))
+                    ) : displayRecipe.extendedIngredients ? (
+                      // For Spoonacular API recipes
+                      displayRecipe.extendedIngredients.map((ingredient, index) => (
+                        <li key={index}>{ingredient.original || `${ingredient.amount} ${ingredient.unit} ${ingredient.name}`}</li>
+                      ))
+                    ) : (
+                      <li>No ingredients available</li>
+                    )}
                   </ul>
                 </div>
               )}
               
-              {recipe.instructions && (
+              {!loadingDetails && (
                 <div className="mb-6">
                   <h3 className="text-lg font-semibold mb-2 text-primary">Instructions</h3>
-                  <p className="text-gray-400 whitespace-pre-line">{recipe.instructions}</p>
+                  {displayRecipe.instructions ? (
+                    // For user recipes with plain text instructions
+                    <p className="text-gray-400 whitespace-pre-line">{displayRecipe.instructions}</p>
+                  ) : displayRecipe.analyzedInstructions && displayRecipe.analyzedInstructions.length > 0 ? (
+                    // For Spoonacular API recipes with structured instructions
+                    <ol className="list-decimal pl-5 text-gray-400">
+                      {displayRecipe.analyzedInstructions[0].steps.map(step => (
+                        <li key={step.number} className="mb-2">{step.step}</li>
+                      ))}
+                    </ol>
+                  ) : (
+                    <p className="text-gray-400">No instructions available</p>
+                  )}
                 </div>
               )}
               
